@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  app:
+    container_name: "App"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - api_mongo
+    restart: unless-stopped
+    ports:
+      - ${API_LOCAL_PORT}:${API_PORT}
+    environment:
+      - API_PORT=${API_PORT}
+      - API_LOCAL_PORT=${API_LOCAL_PORT}
+      - API_HOST=${API_HOST}
+      - MAILER_HOST=${MAILER_HOST}
+      - MAILER_PORT=${MAILER_PORT}
+      - MAILDEV_USER=${MAILDEV_USER}
+      - MAILDEV_PASSWORD=${MAILDEV_PASSWORD}
+      - ACCESS_TOKEN_KEY=${ACCESS_TOKEN_KEY}
+      - ACCESS_TOKEN_TIME=${ACCESS_TOKEN_TIME}
+      - REFRESH_TOKEN_KEY=${REFRESH_TOKEN_KEY}
+      - REFRESH_TOKEN_TIME=${REFRESH_TOKEN_TIME}
+      - MONGO_URL=mongodb://api_mongo:27017/houzing_db
+  api_mongo:
+    container_name: api_mongo
+    image: mongo:latest
+    volumes:  
+      - mongodb_api:/data/db
+    ports:
+      - '27016:27017'
+volumes:
+  mongodb_api:
